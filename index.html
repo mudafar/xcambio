@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Cambio VE — Bolívares y USDT</title>
+<meta name="description" content="Calculadora rápida de bolívares a USDT usando la tasa BCV y la tasa Binance P2P.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="ticket" id="ticket">
+
+  <header class="ticket__head">
+    <h1>Cambio VE</h1>
+    <p class="ticket__sub">Bolívares ⇄ USDT</p>
+  </header>
+
+  <div class="tear" aria-hidden="true"></div>
+
+  <section class="rates" aria-label="Tasas de cambio">
+
+    <div class="rate-row" id="bcv-row">
+      <div class="rate-row__label">
+        <span>Tasa BCV</span>
+        <span class="rate-row__meta" id="bcv-meta">cargando…</span>
+      </div>
+      <div class="rate-row__value">
+        <span class="rate-row__prefix">Bs.</span>
+        <input type="number" inputmode="decimal" id="bcv-input" step="0.01" min="0" placeholder="0,00" />
+      </div>
+    </div>
+
+    <div class="rate-row">
+      <div class="rate-row__label">
+        <span>Binance P2P</span>
+        <span class="rate-row__meta">ingresa el precio de venta</span>
+      </div>
+      <div class="rate-row__value">
+        <span class="rate-row__prefix">Bs.</span>
+        <input type="number" inputmode="decimal" id="p2p-input" step="0.01" min="0" placeholder="0,00" required />
+      </div>
+    </div>
+
+  </section>
+
+  <div class="tear" aria-hidden="true"></div>
+
+  <section class="calc" aria-label="Calculadora">
+
+    <div class="calc__field">
+      <label for="amount-input" id="amount-label">Bolívares</label>
+      <div class="calc__input-wrap">
+        <span class="calc__prefix" id="amount-prefix">Bs.</span>
+        <input type="number" inputmode="decimal" id="amount-input" step="0.01" min="0" placeholder="0,00" autofocus />
+      </div>
+    </div>
+
+    <button class="swap-btn" id="swap-btn" aria-label="Invertir dirección del cálculo" title="Invertir">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M7 10l5-6 5 6M7 14l5 6 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="calc__field calc__field--result">
+      <span id="result-label">USDT</span>
+      <div class="calc__input-wrap calc__input-wrap--result">
+        <span class="calc__prefix" id="result-prefix">$</span>
+        <span id="result-output">0,00</span>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="tear" aria-hidden="true"></div>
+
+  <footer class="reference" id="reference">
+    <span id="gap-text">Ingresa ambas tasas para ver la brecha</span>
+  </footer>
+
+</main>
+
+<p class="disclaimer">Tasa BCV vía dolarapi.com, se guarda una vez al día. Tasa Binance P2P es manual.</p>
+
+<script src="app.js"></script>
+</body>
+</html>
