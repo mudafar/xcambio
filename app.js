@@ -266,6 +266,14 @@ function getUpdatedPair({ source, value, rate }) {
 
   refreshRatesBtn.addEventListener("click", refreshRates);
   initRates();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/xcambio/sw.js").catch(() => {
+        // service worker is optional; ignore registration failures
+      });
+    });
+  }
 })();
 
 if (typeof module !== "undefined") {

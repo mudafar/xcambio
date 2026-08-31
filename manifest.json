@@ -1,0 +1,19 @@
+{
+  "name": "Cambio VE",
+  "short_name": "Cambio VE",
+  "description": "Calculadora rápida de bolívares y USD con tasa BCV y P2P.",
+  "start_url": "/xcambio/",
+  "scope": "/xcambio/",
+  "display": "standalone",
+  "background_color": "#ECEFE7",
+  "theme_color": "#145C43",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/xcambio/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
