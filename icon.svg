@@ -7,10 +7,5 @@
   </defs>
 
   <rect width="512" height="512" rx="104" fill="url(#bg)"/>
-  <rect x="52" y="52" width="408" height="408" rx="82" fill="#F3F6F0"/>
-
-  <text x="256" y="220" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="700" fill="#145C43">Cambio</text>
-  <text x="256" y="299" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="800" fill="#145C43">X</text>
-
-  <path d="M118 346c30-46 77-68 132-68 48 0 88 17 118 51l-29 27c-20-23-48-34-87-34-39 0-72 15-96 45l-38-21zm205 18h62l-86 74h-62l86-74z" fill="#145C43" opacity="0.9"/>
+  <text x="256" y="290" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="112" font-weight="800" fill="#F3F6F0">X</text>
 </svg>
