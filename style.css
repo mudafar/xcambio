@@ -84,10 +84,47 @@ body {
   margin: 18px 0;
 }
 
+.value-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .rates {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.rates__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.refresh-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--brand);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.refresh-btn:hover,
+.refresh-btn:focus-visible {
+  transform: rotate(20deg);
+  border-color: var(--brand);
+  background: var(--brand-dim);
+  outline: none;
 }
 
 .rate-row {
@@ -95,6 +132,10 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  background: #F8F9F5;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
 }
 
 .rate-row__label {
@@ -153,7 +194,8 @@ body {
   font-weight: 500;
 }
 
-#bcv-row.stale .rate-row__meta { color: var(--warn); }
+#bcv-row.stale .rate-row__meta,
+#parallel-row.stale .rate-row__meta { color: var(--warn); }
 
 .calc {
   display: flex;
@@ -179,78 +221,84 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg);
+  background: #F8F9F5;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 10px 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.calc__input-wrap--static {
+  align-items: stretch;
+}
+
+.calc__input-wrap:focus-within {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(20, 92, 67, 0.09);
+  background: #FFFFFF;
 }
 
 .calc__prefix {
   font-family: var(--font-display);
   font-size: 20px;
   color: var(--muted);
+  align-self: center;
+}
+
+.calc__input-copy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.calc__tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1;
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .calc__input-wrap input {
   flex: 1;
   min-width: 0;
   border: none;
-  background: none;
+  background: transparent;
   font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 700;
   color: var(--ink);
+  padding: 0;
+  line-height: 1;
+  margin: 0;
 }
 
 .calc__input-wrap input:focus { outline: none; }
 
 .calc__input-wrap input::placeholder { color: #B9BEAF; }
 
-.calc__input-wrap--result {
+.calc__field--result .calc__input-wrap {
   background: var(--brand-dim);
+  border-color: rgba(20, 92, 67, 0.14);
 }
 
-.calc__input-wrap--result #result-prefix {
+.calc__field--result .calc__prefix {
   color: var(--brand);
-}
-
-#result-output {
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--brand);
-  font-variant-numeric: tabular-nums;
-  word-break: break-all;
-}
-
-.swap-btn {
-  align-self: center;
-  width: 34px;
-  height: 34px;
-  margin: 2px 0;
-  border-radius: 50%;
-  border: 1.5px solid var(--line);
-  background: var(--card);
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.swap-btn:hover {
-  color: var(--brand);
-  border-color: var(--brand);
-}
-
-.swap-btn:active {
-  transform: scale(0.9) rotate(180deg);
 }
 
 .reference {
   text-align: center;
   font-size: 13px;
   color: var(--muted);
+  min-height: 20px;
 }
 
 .reference .gap-pill {
@@ -284,8 +332,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .swap-btn { transition: none; }
-  .swap-btn:active { transform: none; }
+  input:focus-visible,
+  button:focus-visible {
+    outline-offset: 2px;
+  }
 }
 
 input:focus-visible,

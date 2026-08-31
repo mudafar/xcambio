@@ -16,32 +16,37 @@
 
   <header class="ticket__head">
     <h1>Cambio VE</h1>
-    <p class="ticket__sub">Bolívares ⇄ USDT</p>
+    <p class="ticket__sub">Bolívares ⇄ USD</p>
   </header>
 
   <div class="tear" aria-hidden="true"></div>
 
-  <section class="rates" aria-label="Tasas de cambio">
+  <section class="value-stack" aria-label="Valores a convertir">
 
-    <div class="rate-row" id="bcv-row">
-      <div class="rate-row__label">
-        <span>Tasa BCV</span>
-        <span class="rate-row__meta" id="bcv-meta">cargando…</span>
-      </div>
-      <div class="rate-row__value">
-        <span class="rate-row__prefix">Bs.</span>
-        <input type="number" inputmode="decimal" id="bcv-input" step="0.01" min="0" placeholder="0,00" />
+    <div class="calc__field">
+      <div class="calc__input-wrap calc__input-wrap--static">
+        <div class="calc__input-copy">
+          <span class="calc__tag">Bolívares</span>
+          <input type="number" inputmode="decimal" id="bs-input" step="0.01" min="0" aria-label="Bolívares" autofocus />
+        </div>
       </div>
     </div>
 
-    <div class="rate-row">
-      <div class="rate-row__label">
-        <span>Binance P2P</span>
-        <span class="rate-row__meta">ingresa el precio de venta</span>
+    <div class="calc__field">
+      <div class="calc__input-wrap calc__input-wrap--static">
+        <div class="calc__input-copy">
+          <span class="calc__tag">USD BCV</span>
+          <input type="number" inputmode="decimal" id="bcv-usd-input" step="0.01" min="0" aria-label="USD BCV" />
+        </div>
       </div>
-      <div class="rate-row__value">
-        <span class="rate-row__prefix">Bs.</span>
-        <input type="number" inputmode="decimal" id="p2p-input" step="0.01" min="0" placeholder="0,00" required />
+    </div>
+
+    <div class="calc__field calc__field--result">
+      <div class="calc__input-wrap calc__input-wrap--result calc__input-wrap--static">
+        <div class="calc__input-copy">
+          <span class="calc__tag">USD P2P</span>
+          <input type="number" inputmode="decimal" id="parallel-usd-input" step="0.01" min="0" aria-label="USD paralelo / P2P" />
+        </div>
       </div>
     </div>
 
@@ -49,41 +54,44 @@
 
   <div class="tear" aria-hidden="true"></div>
 
-  <section class="calc" aria-label="Calculadora">
+  <section class="rates" aria-label="Tasas de cambio">
+    <div class="rates__header">
+      <span>Tasa de referencia</span>
+      <button type="button" id="refresh-rates-btn" class="refresh-btn" aria-label="Actualizar tasas">↻</button>
+    </div>
 
-    <div class="calc__field">
-      <label for="amount-input" id="amount-label">Bolívares</label>
-      <div class="calc__input-wrap">
-        <span class="calc__prefix" id="amount-prefix">Bs.</span>
-        <input type="number" inputmode="decimal" id="amount-input" step="0.01" min="0" placeholder="0,00" autofocus />
+    <div class="rate-row" id="bcv-row">
+      <div class="rate-row__label">
+        <span>BCV oficial</span>
+        <span class="rate-row__meta" id="bcv-meta">cargando…</span>
+      </div>
+      <div class="rate-row__value">
+        <span class="rate-row__prefix">Bs.</span>
+        <input type="number" inputmode="decimal" id="bcv-rate-input" step="0.01" min="0" placeholder="0,00" />
       </div>
     </div>
 
-    <button class="swap-btn" id="swap-btn" aria-label="Invertir dirección del cálculo" title="Invertir">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-        <path d="M7 10l5-6 5 6M7 14l5 6 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <div class="calc__field calc__field--result">
-      <span id="result-label">USDT</span>
-      <div class="calc__input-wrap calc__input-wrap--result">
-        <span class="calc__prefix" id="result-prefix">$</span>
-        <span id="result-output">0,00</span>
+    <div class="rate-row" id="parallel-row">
+      <div class="rate-row__label">
+        <span>Paralelo / P2P</span>
+        <span class="rate-row__meta" id="parallel-meta">cargando…</span>
+      </div>
+      <div class="rate-row__value">
+        <span class="rate-row__prefix">Bs.</span>
+        <input type="number" inputmode="decimal" id="parallel-rate-input" step="0.01" min="0" placeholder="0,00" required />
       </div>
     </div>
-
   </section>
 
   <div class="tear" aria-hidden="true"></div>
 
   <footer class="reference" id="reference">
-    <span id="gap-text">Ingresa ambas tasas para ver la brecha</span>
+    <span id="gap-text">Ingresa un valor o actualiza las tasas para ver la brecha</span>
   </footer>
 
 </main>
 
-<p class="disclaimer">Tasa BCV vía dolarapi.com, se guarda una vez al día. Tasa Binance P2P es manual.</p>
+<p class="disclaimer">Ambas tasas toman como referencia dollarapi.com.</p>
 
 <script src="app.js"></script>
 </body>
