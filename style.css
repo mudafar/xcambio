@@ -225,6 +225,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px 12px;
+  min-height: 58px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
@@ -279,6 +280,8 @@ body {
   padding: 0;
   line-height: 1;
   margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .calc__input-wrap input:focus { outline: none; }
