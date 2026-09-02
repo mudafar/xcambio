@@ -22,7 +22,7 @@
 <main class="ticket" id="ticket">
 
   <header class="ticket__head">
-    <h1>Cambio VE</h1>
+    <h1>CambioX</h1>
     <p class="ticket__sub">Bolívares ⇄ USD</p>
   </header>
 
@@ -64,7 +64,10 @@
   <section class="rates" aria-label="Tasas de cambio">
     <div class="rates__header">
       <span>Tasa de referencia</span>
-      <button type="button" id="refresh-rates-btn" class="refresh-btn" aria-label="Actualizar tasas">↻</button>
+      <div class="rates__actions">
+        <span class="refresh-status" id="refresh-status" role="status" aria-live="polite"></span>
+        <button type="button" id="refresh-rates-btn" class="refresh-btn" aria-label="Actualizar tasas">↻</button>
+      </div>
     </div>
 
     <div class="rate-row" id="bcv-row">

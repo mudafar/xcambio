@@ -48,6 +48,7 @@ function getUpdatedPair({ source, value, rate }) {
   const parallelRow = document.getElementById("parallel-row");
   const gapText = document.getElementById("gap-text");
   const refreshRatesBtn = document.getElementById("refresh-rates-btn");
+  const refreshStatus = document.getElementById("refresh-status");
 
   const fmt = (n, decimals = 2) =>
     n.toLocaleString("es-VE", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -105,7 +106,7 @@ function getUpdatedPair({ source, value, rate }) {
     updateGap();
   }
 
-  async function fetchRate(url, cacheKey, rateInput, metaEl, rowEl, label) {
+  async function fetchRate(url, cacheKey, rateInput, metaEl, rowEl, label, useLocalFallback = true) {
     try {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error("bad response");
@@ -120,6 +121,10 @@ function getUpdatedPair({ source, value, rate }) {
       applyRateValue(rateInput, metaEl, rowEl, rate, `${label} · ${day}`, false);
       return rate;
     } catch (err) {
+      if (!useLocalFallback) {
+        return null;
+      }
+
       const cached = loadCache(cacheKey);
       if (cached) {
         applyRateValue(rateInput, metaEl, rowEl, cached.rate, "sin conexión · ultimo valor guardado", true);
@@ -132,14 +137,28 @@ function getUpdatedPair({ source, value, rate }) {
   }
 
   async function refreshRates() {
+    refreshRatesBtn.disabled = true;
+    refreshRatesBtn.classList.add("is-loading");
+    refreshStatus.textContent = "Actualizando...";
+    bcvMeta.textContent = "consultando API...";
+    parallelMeta.textContent = "consultando API...";
+
     const [bcvRate, parallelRate] = await Promise.all([
-      fetchRate(BCV_API_URL, BCV_CACHE_KEY, bcvRateInput, bcvMeta, bcvRow, "oficial"),
-      fetchRate(PARALLEL_API_URL, PARALLEL_CACHE_KEY, parallelRateInput, parallelMeta, parallelRow, "paralelo")
+      fetchRate(BCV_API_URL, BCV_CACHE_KEY, bcvRateInput, bcvMeta, bcvRow, "oficial", false),
+      fetchRate(PARALLEL_API_URL, PARALLEL_CACHE_KEY, parallelRateInput, parallelMeta, parallelRow, "paralelo", false)
     ]);
 
     if (bcvRate && parallelRate) {
       syncFromCurrentSource();
+      refreshStatus.textContent = "Actualizado ahora";
+    } else {
+      refreshStatus.textContent = "No se pudo actualizar";
+      if (bcvRate === null) bcvMeta.textContent = "sin conexión · conserva el último valor";
+      if (parallelRate === null) parallelMeta.textContent = "sin conexión · conserva el último valor";
     }
+
+    refreshRatesBtn.disabled = false;
+    refreshRatesBtn.classList.remove("is-loading");
   }
 
   function initRates() {
@@ -151,7 +170,6 @@ function getUpdatedPair({ source, value, rate }) {
       applyRateValue(bcvRateInput, bcvMeta, bcvRow, cachedBcv.rate, `oficial · ${day} · guardado`, false);
     } else {
       bcvMeta.textContent = "cargando…";
-      fetchRate(BCV_API_URL, BCV_CACHE_KEY, bcvRateInput, bcvMeta, bcvRow, "oficial");
     }
 
     if (cachedParallel && Date.now() - cachedParallel.fetchedAt < DAY_MS) {
@@ -159,8 +177,14 @@ function getUpdatedPair({ source, value, rate }) {
       applyRateValue(parallelRateInput, parallelMeta, parallelRow, cachedParallel.rate, `paralelo · ${day} · guardado`, false);
     } else {
       parallelMeta.textContent = "cargando…";
-      fetchRate(PARALLEL_API_URL, PARALLEL_CACHE_KEY, parallelRateInput, parallelMeta, parallelRow, "paralelo");
     }
+
+    Promise.all([
+      fetchRate(BCV_API_URL, BCV_CACHE_KEY, bcvRateInput, bcvMeta, bcvRow, "oficial"),
+      fetchRate(PARALLEL_API_URL, PARALLEL_CACHE_KEY, parallelRateInput, parallelMeta, parallelRow, "paralelo")
+    ]).then(([bcvRate, parallelRate]) => {
+      if (bcvRate && parallelRate) syncFromCurrentSource();
+    });
   }
 
   function syncFromCurrentSource() {
