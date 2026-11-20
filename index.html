@@ -2,107 +2,163 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Cambio VE — Bolívares y USDT</title>
-<meta name="description" content="Calculadora rápida de bolívares a USD usando la tasa BCV y la tasa P2P.">
-<meta name="theme-color" content="#145C43">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CambioX — Bolívares, dólares y USDT</title>
+<meta name="description" content="Convierte bolívares, dólares BCV y USDT al instante. Funciona sin conexión.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#047857" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#065F46" media="(prefers-color-scheme: dark)">
+<script>
+  // Apply the saved theme before the first paint (no flash). Logic mirrors resolveTheme() in core.js.
+  (function () {
+    var pref = null;
+    try { pref = JSON.parse(localStorage.getItem("cambiox:theme")); } catch (e) {}
+    var dark = pref === "dark" || (pref !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    var metas = document.querySelectorAll('meta[name="theme-color"]');
+    for (var i = 0; i < metas.length; i++) metas[i].content = dark ? "#065F46" : "#047857";
+  })();
+</script>
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cambio VE">
-<link rel="manifest" href="/xcambio/manifest.json">
-<link rel="icon" href="/xcambio/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/xcambio/icon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-title" content="CambioX">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<!-- Self-hosted and precached by the service worker: start-up never waits on the network. -->
+<link rel="preload" href="fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://ve.dolarapi.com" crossorigin>
+<link rel="modulepreload" href="core.js">
 <link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
 </head>
 <body>
 
-<main class="ticket" id="ticket">
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+  <symbol id="i-install" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-clear" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.34-5.66M4 4v5h5"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></symbol>
+  <symbol id="i-theme-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7 6-7ZM12 9.5l5 5M17 9.5l-5 5"/></symbol>
+  <!-- USDT (Tether) mark: own drawing of the ₮ in a teal circle, with fixed colours. -->
+  <symbol id="i-tether" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M8.4 8.3h15.2v3.7h-5.7v12.9h-3.8V12H8.4z" fill="#FFFFFF"/><ellipse cx="16" cy="15.4" rx="9.4" ry="2.9" fill="none" stroke="#FFFFFF" stroke-width="1.7"/></symbol>
+</svg>
 
-  <header class="ticket__head">
-    <h1>CambioX</h1>
-    <p class="ticket__sub">Bolívares ⇄ USD</p>
+<div class="app">
+
+  <header class="hero">
+    <div class="hero__bar">
+      <h1 class="brand">
+        <img class="brand__mark" src="icons/mark.svg" alt="" width="28" height="28">
+        CambioX
+      </h1>
+      <div class="hero__actions">
+        <button type="button" class="icon-btn" id="install-btn" hidden aria-label="Instalar la app"><svg class="i"><use href="#i-install"/></svg></button>
+        <button type="button" class="icon-btn" id="theme-btn" aria-label="Tema: automático. Cambiar tema"><svg class="i"><use href="#i-theme-auto"/></svg></button>
+        <button type="button" class="icon-btn" id="share-btn" aria-label="Compartir conversión"><svg class="i"><use href="#i-share"/></svg></button>
+        <button type="button" class="icon-btn" id="refresh-btn" aria-label="Actualizar tasas"><svg class="i"><use href="#i-refresh"/></svg></button>
+      </div>
+    </div>
+
+    <p class="status" id="status" data-tone="idle">
+      <span class="status__dot" aria-hidden="true"></span>
+      <span id="status-text">Cargando tasas…</span>
+      <span class="status__source">· <a href="https://dolarapi.com" target="_blank" rel="noopener">dolarapi.com</a></span>
+    </p>
+
+    <!-- Reference strip: the rates are secondary information (still tappable to set your own). -->
+    <section class="ref" aria-label="Tasas de referencia, bolívares por dólar">
+      <div class="ref__item rate" data-field="rate:bcv">
+        <div class="ref__label">
+          <span>BCV</span>
+          <button type="button" class="rate__reset" data-reset="bcv" hidden aria-label="Tasa BCV manual. Volver a la automática"><span class="rate__reset-text">Manual</span><svg class="i"><use href="#i-reset"/></svg></button>
+        </div>
+        <div class="ref__value">
+          <button type="button" class="rate__main" data-activate="rate:bcv"><span class="value" data-placeholder="—"></span><span class="caret" aria-hidden="true"></span></button>
+          <svg class="i ref__edit" aria-hidden="true"><use href="#i-edit"/></svg>
+        </div>
+      </div>
+
+      <div class="ref__item rate" data-field="rate:usdt">
+        <div class="ref__label">
+          <span>USDT</span>
+          <button type="button" class="rate__reset" data-reset="usdt" hidden aria-label="Tasa USDT manual. Volver a la automática"><span class="rate__reset-text">Manual</span><svg class="i"><use href="#i-reset"/></svg></button>
+        </div>
+        <div class="ref__value">
+          <button type="button" class="rate__main" data-activate="rate:usdt"><span class="value" data-placeholder="—"></span><span class="caret" aria-hidden="true"></span></button>
+          <svg class="i ref__edit" aria-hidden="true"><use href="#i-edit"/></svg>
+        </div>
+      </div>
+
+      <div class="ref__item ref__item--gap">
+        <div class="ref__label">Brecha</div>
+        <div class="ref__value" id="gap">—</div>
+      </div>
+
+      <div class="coach" id="rate-hint" role="note" hidden>
+        <span>Toca una tasa para usar la tuya</span>
+        <button type="button" class="coach__close" aria-label="Entendido"><svg class="i"><use href="#i-clear"/></svg></button>
+      </div>
+    </section>
   </header>
 
-  <div class="tear" aria-hidden="true"></div>
+  <main class="sheet">
+    <div class="amounts" role="group" aria-label="Montos">
+      <div class="amount" data-field="bs">
+        <button type="button" class="amount__main" data-activate="bs">
+          <span class="amount__label"><span class="cur cur--bs" aria-hidden="true">Bs</span>Bolívares</span>
+          <span class="amount__value"><span class="value" data-placeholder="0,00"></span><span class="caret" aria-hidden="true"></span></span>
+        </button>
+        <button type="button" class="amount__action" data-action-for="bs" aria-label="Copiar bolívares"><svg class="i"><use href="#i-copy"/></svg></button>
+      </div>
 
-  <section class="value-stack" aria-label="Valores a convertir">
+      <div class="amount" data-field="bcv">
+        <button type="button" class="amount__main" data-activate="bcv">
+          <span class="amount__label"><span class="cur cur--bcv" aria-hidden="true">$</span>Dólares BCV</span>
+          <span class="amount__value"><span class="value" data-placeholder="0,00"></span><span class="caret" aria-hidden="true"></span></span>
+        </button>
+        <button type="button" class="amount__action" data-action-for="bcv" aria-label="Copiar dólares BCV"><svg class="i"><use href="#i-copy"/></svg></button>
+      </div>
 
-    <div class="calc__field">
-      <div class="calc__input-wrap calc__input-wrap--static">
-        <div class="calc__input-copy">
-          <span class="calc__tag">Bolívares</span>
-          <input type="number" inputmode="decimal" id="bs-input" step="0.01" min="0" aria-label="Bolívares" autofocus />
-        </div>
+      <div class="amount" data-field="usdt">
+        <button type="button" class="amount__main" data-activate="usdt">
+          <span class="amount__label"><svg class="cur" aria-hidden="true"><use href="#i-tether"/></svg>USDT</span>
+          <span class="amount__value"><span class="value" data-placeholder="0,00"></span><span class="caret" aria-hidden="true"></span></span>
+        </button>
+        <button type="button" class="amount__action" data-action-for="usdt" aria-label="Copiar USDT"><svg class="i"><use href="#i-copy"/></svg></button>
       </div>
     </div>
 
-    <div class="calc__field">
-      <div class="calc__input-wrap calc__input-wrap--static">
-        <div class="calc__input-copy">
-          <span class="calc__tag">USD BCV</span>
-          <input type="number" inputmode="decimal" id="bcv-usd-input" step="0.01" min="0" aria-label="USD BCV" />
-        </div>
-      </div>
+    <div class="keypad" role="group" aria-label="Teclado numérico">
+      <button type="button" class="key" data-key="7">7</button>
+      <button type="button" class="key" data-key="8">8</button>
+      <button type="button" class="key" data-key="9">9</button>
+      <button type="button" class="key" data-key="4">4</button>
+      <button type="button" class="key" data-key="5">5</button>
+      <button type="button" class="key" data-key="6">6</button>
+      <button type="button" class="key" data-key="1">1</button>
+      <button type="button" class="key" data-key="2">2</button>
+      <button type="button" class="key" data-key="3">3</button>
+      <button type="button" class="key" data-key="," aria-label="Coma decimal">,</button>
+      <button type="button" class="key" data-key="0">0</button>
+      <button type="button" class="key" data-key="back" aria-label="Borrar (mantén para borrar todo)"><svg class="i"><use href="#i-back"/></svg></button>
     </div>
+  </main>
 
-    <div class="calc__field calc__field--result">
-      <div class="calc__input-wrap calc__input-wrap--result calc__input-wrap--static">
-        <div class="calc__input-copy">
-          <span class="calc__tag">USD P2P</span>
-          <input type="number" inputmode="decimal" id="parallel-usd-input" step="0.01" min="0" aria-label="USD paralelo / P2P" />
-        </div>
-      </div>
-    </div>
+</div>
 
-  </section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<p class="sr-only" id="sr-summary" aria-live="polite"></p>
 
-  <div class="tear" aria-hidden="true"></div>
-
-  <section class="rates" aria-label="Tasas de cambio">
-    <div class="rates__header">
-      <span>Tasa de referencia</span>
-      <div class="rates__actions">
-        <span class="refresh-status" id="refresh-status" role="status" aria-live="polite"></span>
-        <button type="button" id="refresh-rates-btn" class="refresh-btn" aria-label="Actualizar tasas">↻</button>
-      </div>
-    </div>
-
-    <div class="rate-row" id="bcv-row">
-      <div class="rate-row__label">
-        <span>BCV oficial</span>
-        <span class="rate-row__meta" id="bcv-meta">cargando…</span>
-      </div>
-      <div class="rate-row__value">
-        <span class="rate-row__prefix">Bs.</span>
-        <input type="number" inputmode="decimal" id="bcv-rate-input" step="0.01" min="0" placeholder="0,00" />
-      </div>
-    </div>
-
-    <div class="rate-row" id="parallel-row">
-      <div class="rate-row__label">
-        <span>Paralelo / P2P</span>
-        <span class="rate-row__meta" id="parallel-meta">cargando…</span>
-      </div>
-      <div class="rate-row__value">
-        <span class="rate-row__prefix">Bs.</span>
-        <input type="number" inputmode="decimal" id="parallel-rate-input" step="0.01" min="0" placeholder="0,00" required />
-      </div>
-    </div>
-  </section>
-
-  <div class="tear" aria-hidden="true"></div>
-
-  <footer class="reference" id="reference">
-    <span id="gap-text">Ingresa un valor o actualiza las tasas para ver la brecha</span>
-  </footer>
-
-</main>
-
-<p class="disclaimer">Ambas tasas toman como referencia dollarapi.com.</p>
-
-<script src="app.js"></script>
 </body>
 </html>

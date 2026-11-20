@@ -1,0 +1,9 @@
+{
+  "name": "cambiox",
+  "private": true,
+  "description": "CambioX: convert bolívares, BCV dollars and USDT. Static PWA, no build step.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test core.test.js"
+  }
+}
